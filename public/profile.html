@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CírculoU - Meu Perfil</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap');
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg: #0d0d12;
+  --card: #16161f;
+  --border: rgba(255,255,255,0.07);
+  --accent: #c084fc;
+  --accent2: #818cf8;
+  --text: #f4f4f5;
+  --muted: #71717a;
+  --danger: #f87171;
+  --success: #4ade80;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px 60px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(192,132,252,0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 80% 90%, rgba(129,140,248,0.08) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.back-btn {
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: color 0.2s;
+  margin-bottom: 24px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.back-btn:hover { color: var(--text); }
+
+.container {
+  position: relative;
+  z-index: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+  animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes fadeUp {
+  to { opacity:1; transform:translateY(0); }
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.avatar-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(192,132,252,0.4);
+  background: #1e1b30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 1.2rem;
+}
+
+.avatar-wrapper:hover .avatar-overlay { opacity: 1; }
+
+.profile-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.profile-email {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.section-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 24px 0 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.section-title:first-of-type { margin-top: 0; border-top: none; padding-top: 0; }
+
+.field { margin-bottom: 14px; }
+
+label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+input {
+  width: 100%;
+  padding: 13px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(192,132,252,0.15);
+}
+
+input::placeholder { color: #3f3f46; }
+
+.hint { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.photo-thumb {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+}
+
+.photo-upload {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative;
+}
+
+.photo-upload:hover { border-color: var(--accent); }
+
+.photo-upload input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+.photo-upload p { font-size: 0.82rem; color: var(--muted); }
+#photoCount { font-size: 0.78rem; color: var(--accent); margin-top: 4px; }
+
+button[type="submit"] {
+  width: 100%;
+  padding: 15px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+button[type="submit"]:hover { opacity: 0.9; }
+button[type="submit"]:active { transform: scale(0.98); }
+button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+
+#statusMsg {
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 12px;
+  min-height: 20px;
+}
+
+.status-success { color: var(--success); }
+.status-error { color: var(--danger); }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+
+<button class="back-btn" id="backBtn">← Voltar</button>
+
+<div class="container">
+  <div id="loadingState" class="loading">Carregando perfil...</div>
+
+  <div id="profileContent" style="display:none">
+    <div class="profile-header">
+      <div class="avatar-wrapper">
+        <img id="profilePhoto" class="avatar" src="" alt="Foto do perfil">
+        <div class="avatar-overlay">📷</div>
+      </div>
+      <p class="profile-name" id="displayName">—</p>
+      <p class="profile-email" id="displayEmail">—</p>
+    </div>
+
+    <form id="profileForm" novalidate>
+      <p class="section-title">Dados pessoais</p>
+
+      <div class="field">
+        <label for="name">Nome</label>
+        <input type="text" id="name" name="name" placeholder="Seu nome" required maxlength="80">
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+      </div>
+
+      <p class="section-title">Perfil acadêmico</p>
+
+      <div class="field">
+        <label for="skills">Skills</label>
+        <input type="text" id="skills" name="skills" placeholder="Python, Design, Oratória" maxlength="300">
+        <p class="hint">Separadas por vírgula</p>
+      </div>
+
+      <div class="field">
+        <label for="courses">Cursos</label>
+        <input type="text" id="courses" name="courses" placeholder="Engenharia, Direito" maxlength="300">
+        <p class="hint">Separados por vírgula</p>
+      </div>
+
+      <div class="field">
+        <label for="goals">Objetivos</label>
+        <input type="text" id="goals" name="goals" placeholder="O que você quer alcançar?" maxlength="300">
+      </div>
+
+      <p class="section-title">Sobre você</p>
+
+      <div class="field">
+        <label for="personality">Personalidade</label>
+        <input type="text" id="personality" name="personality" placeholder="Ex: INTJ, extrovertido" maxlength="100">
+      </div>
+
+      <div class="field">
+        <label for="availability">Disponibilidade</label>
+        <input type="text" id="availability" name="availability" placeholder="Ex: Noites e fins de semana" maxlength="100">
+      </div>
+
+      <div class="field">
+        <label for="instagram">Instagram</label>
+        <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/seu_perfil" maxlength="100">
+      </div>
+
+      <p class="section-title">Fotos</p>
+
+      <div id="currentPhotos" class="photo-grid" style="display:none"></div>
+
+      <div class="field">
+        <div class="photo-upload">
+          <input type="file" id="photos" name="photos" multiple accept="image/jpeg,image/png,image/webp">
+          <p>Clique para trocar as fotos</p>
+          <p id="photoCount"></p>
+        </div>
+        <p class="hint">Até 4 fotos · JPEG, PNG ou WebP · Máx 5MB cada · Substitui todas as atuais</p>
+      </div>
+
+      <button type="submit" id="submitBtn">Salvar alterações</button>
+      <p id="statusMsg"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ===== AUTH GUARD =====
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+
+  if (!token || !userId) {
+    window.location.href = '/index.html';
+  }
+
+  const authHeaders = { 'Authorization': `Bearer ${token}` };
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = '/matches.html';
+  });
+
+  const form = document.getElementById('profileForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusMsg = document.getElementById('statusMsg');
+  const photosInput = document.getElementById('photos');
+  const photoCount = document.getElementById('photoCount');
+  const loadingState = document.getElementById('loadingState');
+  const profileContent = document.getElementById('profileContent');
+
+  photosInput.addEventListener('change', () => {
+    const count = photosInput.files.length;
+    if (count > 4) {
+      statusMsg.textContent = 'Máximo 4 fotos.';
+      statusMsg.className = 'status-error';
+      photosInput.value = '';
+      photoCount.textContent = '';
+      return;
+    }
+    photoCount.textContent = count > 0 ? `${count} foto(s) selecionada(s)` : '';
+    statusMsg.textContent = '';
+  });
+
+  async function loadProfile() {
+    try {
+      const res = await fetch(`/profile/${userId}`, { headers: authHeaders });
+
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        window.location.href = '/index.html';
+        return;
+      }
+
+      const user = await res.json();
+
+      form.name.value = user.name || '';
+      form.email.value = user.email || '';
+      form.skills.value = (user.skills || []).join(', ');
+      form.courses.value = (user.courses || []).join(', ');
+      form.goals.value = user.goals || '';
+      form.personality.value = user.personality || '';
+      form.availability.value = user.availability || '';
+      form.instagram.value = user.instagram || '';
+
+      document.getElementById('displayName').textContent = user.name;
+      document.getElementById('displayEmail').textContent = user.email;
+
+      // Foto do perfil
+      const profilePhoto = document.getElementById('profilePhoto');
+      if (user.photos && user.photos.length > 0) {
+        profilePhoto.src = user.photos[0];
+        profilePhoto.onerror = () => { profilePhoto.src = ''; };
+
+        // Grid de fotos atuais
+        const grid = document.getElementById('currentPhotos');
+        grid.style.display = 'grid';
+        grid.innerHTML = user.photos.map(url =>
+          `<img class="photo-thumb" src="${url}" alt="Foto do perfil" loading="lazy">`
+        ).join('');
+      }
+
+      loadingState.style.display = 'none';
+      profileContent.style.display = 'block';
+    } catch (err) {
+      loadingState.textContent = 'Erro ao carregar perfil.';
+      console.error(err);
+    }
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusMsg.textContent = '';
+    statusMsg.className = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Salvando...';
+
+    try {
+      const formData = new FormData(form);
+
+      const res = await fetch(`/profile/${userId}`, {
+        method: 'PUT',
+        headers: authHeaders, // SEM Content-Type — FormData define o boundary
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        statusMsg.textContent = '✓ Perfil atualizado!';
+        statusMsg.className = 'status-success';
+        // Atualiza nome exibido
+        document.getElementById('displayName').textContent = form.name.value;
+      } else {
+        statusMsg.textContent = data.message || 'Erro ao salvar.';
+        statusMsg.className = 'status-error';
+      }
+    } catch (err) {
+      statusMsg.textContent = 'Erro de conexão. Tente novamente.';
+      statusMsg.className = 'status-error';
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Salvar alterações';
+  });
+
+  loadProfile();
+</script>
+</body>
+</html>

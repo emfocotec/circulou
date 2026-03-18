@@ -1,0 +1,28 @@
+# CirculoU
+
+Um projeto que leva o individuo a encontrar amizades, networking e pessoas para se relacionar.
+
+
+## 🛠 Tecnologias usadas
+- HTML
+- JavaScript
+- MongoDB
+- Node.js
+- Fontes do Google
+
+## ⚙️ Como rodar o projeto
+
+  node server.js
+
+## 🌎 Deploy
+Link do site: https://CirculoU.com
+
+## 📌 Funcionalidades
+- Login
+- Cadastro
+- Upload de imagem
+- Perfil
+- Atualizações 
+
+## 👨‍💻 Autor
+Feito por Em Foco

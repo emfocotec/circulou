@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CírculoU - Matches</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap');
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg: #0d0d12;
+  --card: #16161f;
+  --border: rgba(255,255,255,0.07);
+  --accent: #c084fc;
+  --accent2: #818cf8;
+  --text: #f4f4f5;
+  --muted: #71717a;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 60px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 15%, rgba(192,132,252,0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 60% at 85% 85%, rgba(129,140,248,0.08) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* TOP BAR */
+.topbar {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 20px 16px;
+}
+
+.topbar-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.icon-btn:hover { background: rgba(255,255,255,0.07); }
+.icon-btn:active { transform: scale(0.93); }
+
+/* CARD AREA */
+#cardContainer {
+  position: relative;
+  z-index: 1;
+  width: 90%;
+  max-width: 360px;
+  height: 480px;
+  margin-top: 8px;
+}
+
+.card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+  animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+  opacity: 0;
+  transform: translateY(16px) scale(0.97);
+  user-select: none;
+}
+
+@keyframes cardIn {
+  to { opacity:1; transform:translateY(0) scale(1); }
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0; left: 0;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to top, rgba(10,10,16,0.95), transparent);
+}
+
+.card-content {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  padding: 24px 24px 28px;
+  z-index: 2;
+}
+
+.card-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.card-tag {
+  display: inline-block;
+  background: rgba(192,132,252,0.2);
+  border: 1px solid rgba(192,132,252,0.4);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 50px;
+  margin: 2px 2px 0 0;
+  letter-spacing: 0.03em;
+}
+
+.card-goals {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.85rem;
+  margin-top: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* EMPTY CARD */
+.card-empty {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: var(--card);
+  border: 1px dashed var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--muted);
+}
+
+.card-empty .empty-icon { font-size: 2.5rem; opacity: 0.4; }
+.card-empty p { font-size: 0.95rem; }
+
+/* SWIPE INDICATORS */
+.card.swiping-right::before {
+  content: "❤️ CURTIR";
+  position: absolute;
+  top: 20px; left: 20px;
+  z-index: 10;
+  background: #22c55e;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transform: rotate(-10deg);
+}
+
+.card.swiping-left::before {
+  content: "✖ PASSAR";
+  position: absolute;
+  top: 20px; right: 20px;
+  z-index: 10;
+  background: #ef4444;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transform: rotate(10deg);
+}
+
+/* BUTTONS */
+.buttons {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.swipe-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  font-size: 1.6rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  background: var(--card);
+}
+
+.swipe-btn:hover { transform: scale(1.15); }
+.swipe-btn:active { transform: scale(0.93); }
+
+.btn-no:hover {
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239,68,68,0.3);
+}
+
+.btn-yes:hover {
+  border-color: #22c55e;
+  box-shadow: 0 0 20px rgba(34,197,94,0.3);
+}
+
+/* COUNTER */
+#counter {
+  position: relative;
+  z-index: 2;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 14px;
+}
+
+/* MATCH OVERLAY */
+#matchOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(6px);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+
+#matchOverlay.show { display: flex; }
+
+.match-card {
+  background: var(--card);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 28px;
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 60px rgba(192,132,252,0.15);
+  animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  opacity: 0;
+  transform: scale(0.7);
+  max-width: 340px;
+}
+
+@keyframes popIn {
+  to { opacity:1; transform:scale(1); }
+}
+
+.match-emoji { font-size: 3rem; margin-bottom: 12px; }
+
+.match-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.8rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.match-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.match-insta-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.match-insta-btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-logo">CírculoU</span>
+  <div class="topbar-actions">
+    <button class="icon-btn" id="chatBtn" title="Chats">💬</button>
+    <button class="icon-btn" id="profileBtn" title="Meu perfil">👤</button>
+    <button class="icon-btn" id="logoutBtn" title="Sair">🚪</button>
+  </div>
+</div>
+
+<div id="cardContainer"></div>
+<p id="counter"></p>
+
+<div class="buttons">
+  <button class="swipe-btn btn-no" id="btnNo">✖</button>
+  <button class="swipe-btn btn-yes" id="btnYes">♥</button>
+</div>
+
+<!-- MATCH OVERLAY -->
+<div id="matchOverlay">
+  <div class="match-card">
+    <div class="match-emoji">🎉</div>
+    <p class="match-title">Vocês CírculoUram!</p>
+    <p class="match-sub">Conecte-se agora pelo Instagram</p>
+    <a id="matchInstaLink" class="match-insta-btn" href="#" target="_blank" rel="noopener noreferrer">
+      Abrir Instagram ↗
+    </a>
+    <br><br>
+    <button id="matchContinueBtn" style="background:none;border:1px solid rgba(255,255,255,0.15);color:#71717a;padding:10px 24px;border-radius:50px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;transition:color 0.2s;">
+      Continuar vendo perfis
+    </button>
+  </div>
+</div>
+
+<script>
+  // ===== AUTH GUARD =====
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+
+  if (!token || !userId) {
+    window.location.href = '/index.html';
+  }
+
+  const authHeaders = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  };
+
+  // ===== LOGOUT =====
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    window.location.href = '/index.html';
+  });
+
+  // ===== PERFIL =====
+  document.getElementById('chatBtn').addEventListener('click', () => { window.location.href = '/chat.html'; });
+
+  document.getElementById('profileBtn').addEventListener('click', () => {
+    window.location.href = '/profile.html';
+  });
+
+  // ===== STATE =====
+  let users = [];
+  let current = 0;
+  const container = document.getElementById('cardContainer');
+  const counter = document.getElementById('counter');
+  const matchOverlay = document.getElementById('matchOverlay');
+  const matchInstaLink = document.getElementById('matchInstaLink');
+
+  async function loadUsers() {
+    try {
+      const res = await fetch(`/users/${userId}`, { headers: authHeaders });
+
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        window.location.href = '/index.html';
+        return;
+      }
+
+      users = await res.json();
+      showCard();
+    } catch (err) {
+      console.error('Erro ao carregar usuários:', err);
+    }
+  }
+
+  function showCard() {
+    container.innerHTML = '';
+
+    if (current >= users.length) {
+      container.innerHTML = `
+        <div class="card-empty">
+          <div class="empty-icon">🌌</div>
+          <p>Nenhum usuário novo por agora</p>
+        </div>`;
+      counter.textContent = '';
+      return;
+    }
+
+    const u = users[current];
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const photo = u.photos && u.photos.length > 0
+      ? `<img src="${u.photos[0]}" alt="Foto de ${u.name}" loading="lazy">`
+      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1e1b30,#2d1b4e);display:flex;align-items:center;justify-content:center;font-size:3rem;">👤</div>`;
+
+    const tags = [...(u.courses || []), ...(u.skills || [])]
+      .slice(0, 4)
+      .map(t => `<span class="card-tag">${t}</span>`)
+      .join('');
+
+    card.innerHTML = `
+      ${photo}
+      <div class="card-content">
+        <p class="card-name">${u.name}</p>
+        <div>${tags}</div>
+        ${u.goals ? `<p class="card-goals">${u.goals}</p>` : ''}
+      </div>`;
+
+    container.appendChild(card);
+
+    counter.textContent = `${current + 1} de ${users.length}`;
+  }
+
+  async function handleSwipe(type) {
+    if (current >= users.length) return;
+
+    const likedUserId = users[current]._id;
+
+    // Animação de saída
+    const card = container.querySelector('.card');
+    if (card) {
+      card.style.transition = 'transform 0.35s ease, opacity 0.35s ease';
+      card.style.transform = type === 'yes'
+        ? 'translateX(120%) rotate(15deg)'
+        : 'translateX(-120%) rotate(-15deg)';
+      card.style.opacity = '0';
+    }
+
+    try {
+      if (type === 'yes') {
+        const res = await fetch('/like', {
+          method: 'POST',
+          headers: authHeaders,
+          body: JSON.stringify({ userId, likedUserId })
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('userId');
+          window.location.href = '/index.html';
+          return;
+        }
+
+        const data = await res.json();
+
+        if (data.match && data.likedUserInstagram) {
+          matchInstaLink.href = data.likedUserInstagram;
+          matchInstaLink.onclick = () => {
+            window.open(data.likedUserInstagram, '_blank', 'noopener,noreferrer');
+          };
+          matchOverlay.classList.add('show');
+          return;
+        }
+      } else {
+        await fetch('/dislike', {
+          method: 'POST',
+          headers: authHeaders,
+          body: JSON.stringify({ userId, dislikedUserId: likedUserId }) // campo correto
+        });
+      }
+    } catch (err) {
+      console.error('Erro no swipe:', err);
+    }
+
+    setTimeout(() => {
+      current++;
+      showCard();
+    }, 350);
+  }
+
+  document.getElementById('btnYes').addEventListener('click', () => handleSwipe('yes'));
+  document.getElementById('btnNo').addEventListener('click', () => handleSwipe('no'));
+
+  // Fechar overlay ao clicar fora
+  matchOverlay.addEventListener('click', (e) => {
+    if (e.target === matchOverlay) {
+      matchOverlay.classList.remove('show');
+      current++;
+      showCard();
+    }
+  });
+
+  // Botão continuar
+  document.getElementById('matchContinueBtn').addEventListener('click', () => {
+    matchOverlay.classList.remove('show');
+    current++;
+    showCard();
+  });
+
+  loadUsers();
+</script>
+</body>
+</html>

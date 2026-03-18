@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CírculoU - Cadastro</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap');
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg: #0d0d12;
+  --card: #16161f;
+  --border: rgba(255,255,255,0.07);
+  --accent: #c084fc;
+  --accent2: #818cf8;
+  --text: #f4f4f5;
+  --muted: #71717a;
+  --danger: #f87171;
+  --success: #4ade80;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(192,132,252,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(129,140,248,0.10) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: 420px;
+  max-width: 95vw;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+  animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes fadeUp {
+  to { opacity:1; transform:translateY(0); }
+}
+
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin-bottom: 32px;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 13px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: none;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(192,132,252,0.15);
+}
+
+input::placeholder, textarea::placeholder { color: #3f3f46; }
+
+.hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Upload de foto */
+.photo-upload {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  position: relative;
+}
+
+.photo-upload:hover { border-color: var(--accent); }
+
+.photo-upload input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+.photo-upload-icon { font-size: 1.8rem; margin-bottom: 6px; }
+.photo-upload p { font-size: 0.85rem; color: var(--muted); }
+#photoCount { font-size: 0.8rem; color: var(--accent); margin-top: 6px; }
+
+button[type="submit"] {
+  width: 100%;
+  padding: 15px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+button[type="submit"]:hover { opacity: 0.9; }
+button[type="submit"]:active { transform: scale(0.98); }
+button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.login-link {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-top: 20px;
+}
+
+.login-link a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-link a:hover { text-decoration: underline; }
+
+#errorMsg {
+  color: var(--danger);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 12px;
+  min-height: 20px;
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 20px 0 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <p class="logo">CírculoU</p>
+  <p class="subtitle">Crie sua conta e comece a conectar</p>
+
+  <form id="registerForm" novalidate>
+    <p class="section-title">Dados pessoais</p>
+
+    <div class="field">
+      <label for="name">Nome completo</label>
+      <input type="text" id="name" name="name" placeholder="Seu nome" required maxlength="80" autocomplete="name">
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
+    </div>
+
+    <div class="field">
+      <label for="password">Senha</label>
+      <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required minlength="8" autocomplete="new-password">
+    </div>
+
+    <p class="section-title">Perfil acadêmico</p>
+
+    <div class="field">
+      <label for="skills">Skills</label>
+      <input type="text" id="skills" name="skills" placeholder="Ex: Python, Design, Oratória" maxlength="300">
+      <p class="hint">Separadas por vírgula</p>
+    </div>
+
+    <div class="field">
+      <label for="courses">Cursos</label>
+      <input type="text" id="courses" name="courses" placeholder="Ex: Engenharia, Direito" maxlength="300">
+      <p class="hint">Separados por vírgula</p>
+    </div>
+
+    <div class="field">
+      <label for="goals">Objetivos</label>
+      <input type="text" id="goals" name="goals" placeholder="O que você quer alcançar?" maxlength="300">
+    </div>
+
+    <p class="section-title">Sobre você</p>
+
+    <div class="field">
+      <label for="personality">Perfil de personalidade</label>
+      <input type="text" id="personality" name="personality" placeholder="Ex: INTJ, extrovertido, analítico" maxlength="100">
+    </div>
+
+    <div class="field">
+      <label for="availability">Disponibilidade</label>
+      <input type="text" id="availability" name="availability" placeholder="Ex: Noites e fins de semana" maxlength="100">
+    </div>
+
+    <div class="field">
+      <label for="instagram">Instagram (para match)</label>
+      <input type="url" id="instagram" name="instagram" placeholder="https://instagram.com/seu_perfil" maxlength="100">
+    </div>
+
+    <p class="section-title">Fotos</p>
+
+    <div class="field">
+      <div class="photo-upload">
+        <input type="file" id="photos" name="photos" multiple accept="image/jpeg,image/png,image/webp">
+        <div class="photo-upload-icon">📷</div>
+        <p>Clique para adicionar fotos</p>
+        <p id="photoCount">Nenhuma foto selecionada</p>
+      </div>
+      <p class="hint">Até 4 fotos · JPEG, PNG ou WebP · Máximo 5MB cada</p>
+    </div>
+
+    <button type="submit" id="submitBtn">Criar conta</button>
+    <p id="errorMsg"></p>
+  </form>
+
+  <p class="login-link">Já tem conta? <a href="/index.html">Entrar</a></p>
+</div>
+
+<script>
+  const form = document.getElementById('registerForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorMsg = document.getElementById('errorMsg');
+  const photosInput = document.getElementById('photos');
+  const photoCount = document.getElementById('photoCount');
+
+  photosInput.addEventListener('change', () => {
+    const count = photosInput.files.length;
+    if (count > 4) {
+      errorMsg.textContent = 'Máximo 4 fotos.';
+      photosInput.value = '';
+      photoCount.textContent = 'Nenhuma foto selecionada';
+      return;
+    }
+    photoCount.textContent = count > 0 ? `${count} foto(s) selecionada(s)` : 'Nenhuma foto selecionada';
+    errorMsg.textContent = '';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg.textContent = '';
+
+    const password = form.password.value;
+    if (password.length < 8) {
+      errorMsg.textContent = 'Senha deve ter ao menos 8 caracteres.';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Criando conta...';
+
+    try {
+      const formData = new FormData(form);
+
+      const res = await fetch('/register', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
+        window.location.href = '/matches.html';
+      } else {
+        errorMsg.textContent = data.message || 'Erro ao cadastrar.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Criar conta';
+      }
+    } catch (err) {
+      errorMsg.textContent = 'Erro de conexão. Tente novamente.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Criar conta';
+    }
+  });
+</script>
+</body>
+</html>
